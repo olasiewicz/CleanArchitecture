@@ -3,6 +3,7 @@ package com.example.userwithhilt_retrofit.di
 import android.app.Application
 import androidx.room.Room
 import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDatabase
+import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import com.example.userwithhilt_retrofit.data.repository.NoteCacheRepositoryImpl
 import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
 import dagger.Module
@@ -26,11 +27,17 @@ object CacheModule {
         ).build()
     }
 
-    @Provides
     @Singleton
-    fun provideNoteRepository(db: NoteDatabase): NoteRepository {
-        return NoteCacheRepositoryImpl(db.noteDao)
+    @Provides
+    fun provideNoteCacheMapper(): CacheMapper {
+        return CacheMapper()
     }
+
+//    @Provides
+//    @Singleton
+//    fun provideNoteCacheRepository(db: NoteDatabase, cacheMapper: CacheMapper): NoteRepository {
+//        return NoteCacheRepositoryImpl(db.noteDao, cacheMapper)
+//    }
 
 //    @Provides
 //    @Singleton
