@@ -1,17 +1,16 @@
 package com.example.userwithhilt_retrofit.data.repository
 
+import androidx.lifecycle.LiveData
 import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDao
 import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
-import com.example.userwithhilt_retrofit.data.datasource.cache.model.NoteCacheEntity
 import com.example.userwithhilt_retrofit.domain.model.Note
-import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
-import kotlinx.coroutines.flow.Flow
+import com.example.userwithhilt_retrofit.domain.repository.NoteCacheRepository
 
 class NoteCacheRepositoryImpl(
     private val dao: NoteDao,
     cacheMapper: CacheMapper
-) : NoteRepository {
-    override fun getNotes(): Flow<List<Note>> {
+) : NoteCacheRepository {
+    override fun getNotes(): LiveData<List<Note>> {
         TODO("Not yet implemented")
     }
 

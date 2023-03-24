@@ -1,4 +1,4 @@
-package com.example.userwithhilt_retrofit.ui.noteList
+package com.example.userwithhilt_retrofit.ui.notes.noteList
 
 import android.os.Bundle
 import android.view.View
@@ -19,11 +19,10 @@ class NoteListFragment : Fragment(R.layout.fragment_note_list) {
     }
 
     private fun subscribeObservers() {
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        viewModel.viewState.observe(viewLifecycleOwner) { state ->
 
-            state.notesData?.let {print("Wojtas $state") }
-            state.isLoading?.let { print("loading") }
-            state.message?.let { print(state.message) }
+            state.listOfNotes?.let {print("Wojtas $state") }
+
 
 
 

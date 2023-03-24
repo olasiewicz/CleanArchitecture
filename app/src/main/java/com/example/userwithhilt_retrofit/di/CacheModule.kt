@@ -4,8 +4,6 @@ import android.app.Application
 import androidx.room.Room
 import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDatabase
 import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
-import com.example.userwithhilt_retrofit.data.repository.NoteCacheRepositoryImpl
-import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

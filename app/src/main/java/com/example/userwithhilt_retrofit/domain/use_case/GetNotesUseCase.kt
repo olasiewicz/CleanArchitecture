@@ -1,20 +1,23 @@
 package com.example.userwithhilt_retrofit.domain.use_case
 
 import com.example.userwithhilt_retrofit.domain.model.Note
-import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
-import com.example.userwithhilt_retrofit.ui.noteList.NoteListViewState
+import com.example.userwithhilt_retrofit.domain.repository.NoteNetworkRepository
+import com.example.userwithhilt_retrofit.domain.util.DataState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetNotesUseCase
 @Inject constructor(
-    private val repository: NoteRepository
+    private val repository: NoteNetworkRepository
 ) {
 
-    operator fun invoke(
+    fun getNotes(
+        token: String,
+        page: Int,
+        query: String,
         //noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)
-    ): Flow<List<Note>> {
-        return repository.getNotes()
+    ): Flow<DataState<List<Note>>> {
+        return repository.getNotes(token, page, query)
 
 
 //            .map { notes ->

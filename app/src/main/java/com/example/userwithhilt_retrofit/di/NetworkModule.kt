@@ -3,7 +3,7 @@ package com.example.userwithhilt_retrofit.di
 import com.example.userwithhilt_retrofit.data.datasource.network.UserApiService
 import com.example.userwithhilt_retrofit.data.datasource.network.mappers.NetworkMapper
 import com.example.userwithhilt_retrofit.data.repository.NoteNetworkRepositoryImpl
-import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
+import com.example.userwithhilt_retrofit.domain.repository.NoteNetworkRepository
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -41,7 +41,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNoteNetworkRepository(service: UserApiService, token: String, networkMapper: NetworkMapper): NoteRepository {
+    fun provideNoteNetworkRepository(service: UserApiService, token: String, networkMapper: NetworkMapper): NoteNetworkRepository {
         return NoteNetworkRepositoryImpl(service, token, networkMapper)
     }
 

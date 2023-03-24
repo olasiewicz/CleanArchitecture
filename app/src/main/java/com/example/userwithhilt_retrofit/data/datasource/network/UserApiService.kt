@@ -1,8 +1,6 @@
 package com.example.userwithhilt_retrofit.data.datasource.network
 
-import androidx.lifecycle.LiveData
-import com.example.userwithhilt_retrofit.data.datasource.network.model.NoteNetworkEntity
-import kotlinx.coroutines.flow.Flow
+import com.example.userwithhilt_retrofit.data.datasource.network.model.NotesResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -14,7 +12,7 @@ interface UserApiService {
         @Header("Authorization") token: String,
         @Query("page") page: Int,
         @Query("query") query: String
-    ): LiveData<List<NoteNetworkEntity>>
+    ): NotesResponse
 //
 //    @GET("get")
 //    suspend fun get(

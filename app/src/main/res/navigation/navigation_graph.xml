@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/noteListFragment"
-        android:name="com.example.userwithhilt_retrofit.ui.noteList.NoteListFragment"
+        android:name="com.example.userwithhilt_retrofit.ui.notes.noteList.NoteListFragment"
         android:label="NoteListFragment" >
         <action
             android:id="@+id/action_noteListFragment_to_noteDetailsFragment"
@@ -14,6 +14,6 @@
     </fragment>
     <fragment
         android:id="@+id/noteDetailsFragment"
-        android:name="com.example.userwithhilt_retrofit.ui.noteDetails.NoteDetailsFragment"
+        android:name="com.example.userwithhilt_retrofit.ui.notes.noteDetails.NoteDetailsFragment"
         android:label="NoteDetailsFragment" />
 </navigation>

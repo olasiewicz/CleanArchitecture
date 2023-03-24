@@ -1,4 +1,4 @@
-package com.example.userwithhilt_retrofit.ui.noteList
+package com.example.userwithhilt_retrofit.ui.notes.noteList
 
 import com.example.userwithhilt_retrofit.domain.model.Note
 
