@@ -8,4 +8,8 @@ data class NoteUseCases
 //    val deleteNote: DeleteNote,
 //    val addNote: AddNote,
 //    val getNote: GetNote
-)
+) {
+    fun sayHello() {
+        println("Hello")
+    }
+}

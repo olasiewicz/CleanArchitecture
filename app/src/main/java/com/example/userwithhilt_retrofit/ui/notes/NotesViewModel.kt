@@ -25,7 +25,7 @@ class NotesListViewModel @Inject constructor(
         get() = _viewState
 
     init {
-        handleStateEvent(NotesStateEvent.GetNotesEvent)
+       // handleStateEvent(NotesStateEvent.GetNotesEvent)
     }
 
 
@@ -41,7 +41,7 @@ class NotesListViewModel @Inject constructor(
         when (stateEvent) {
 
             is NotesStateEvent.GetNotesEvent -> {
-                return _viewState.value?.let { state ->
+                return _viewState.value.let { state ->
                     noteUseCases.getNotesUseCase.getNotes(
                         "Token 9c8b06d329136da358c2d00e76946b0111ce2c48",
                         1,
