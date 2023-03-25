@@ -11,6 +11,7 @@ import com.example.userwithhilt_retrofit.ui.notes.NotesViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +25,11 @@ class NotesListViewModel @Inject constructor(
     val viewState: LiveData<NotesViewState>
         get() = _viewState
 
+    private val _shouldDisplayProgressBar: MutableLiveData<Boolean> = MutableLiveData()
+
+    val shouldDisplayProgressBar: LiveData<Boolean>
+        get() = _shouldDisplayProgressBar
+
     init {
        // handleStateEvent(NotesStateEvent.GetNotesEvent)
     }
@@ -36,36 +42,107 @@ class NotesListViewModel @Inject constructor(
 //            }
 //        }
 
-    fun handleStateEvent(stateEvent: NotesStateEvent): LiveData<DataState<List<Note>>>? {
-        println("DEBUG: New StateEvent detected: $stateEvent")
-        when (stateEvent) {
+//    fun handleStateEvent(stateEvent: NotesStateEvent): LiveData<DataState<List<Note>>>? {
+//        println("DEBUG: New StateEvent detected: $stateEvent")
+//        when (stateEvent) {
+//
+//            is NotesStateEvent.GetNotesEvent -> {
+//                return _viewState.value.let { state ->
+//                    noteUseCases.getNotesUseCase.getNotes(
+//                        "Token 9c8b06d329136da358c2d00e76946b0111ce2c48",
+//                        1,
+//                        "chicken"
+//                    ).onEach { dataState ->
+//
+//                        dataState.data?.let { list ->
+//                            _viewState.value = NotesViewState(listOfNotes = list)
+//                        }
+//                    }.asLiveData()
+//
+//                }
+//
+//            }
+//
+//            is NotesStateEvent.GetDetailsEvent -> {
+//                return AbsentLiveData.create()
+//            }
+//
+//            is NotesStateEvent.None -> {
+//                return AbsentLiveData.create()
+//            }
+//        }
+//    }
 
-            is NotesStateEvent.GetNotesEvent -> {
-                return _viewState.value.let { state ->
-                    noteUseCases.getNotesUseCase.getNotes(
-                        "Token 9c8b06d329136da358c2d00e76946b0111ce2c48",
-                        1,
-                        "chicken"
-                    ).onEach { dataState ->
 
-                        dataState.data?.let { list ->
-                            _viewState.value = NotesViewState(listOfNotes = list)
-                        }
-                    }.asLiveData()
 
+
+
+
+
+
+
+
+
+    fun onTriggerEvent(event: NotesStateEvent){
+        viewModelScope.launch {
+            try {
+                when(event){
+                    is NotesStateEvent.GetNotesEvent -> {
+                        getNotes()
+                    }
+                    is NotesStateEvent.GetDetailsEvent -> {
+                        //nextPage()
+                    }
+                    is NotesStateEvent.None -> {
+                      //  restoreState()
+                    }
                 }
-
+            }catch (e: Exception){
+                Log.e("wojtas", "launchJob: Exception: ${e}, ${e.cause}")
+                e.printStackTrace()
             }
-
-            is NotesStateEvent.GetDetailsEvent -> {
-                return AbsentLiveData.create()
-            }
-
-            is NotesStateEvent.None -> {
-                return AbsentLiveData.create()
+            finally {
+                Log.d("wojtas", "launchJob: finally called.")
             }
         }
     }
+
+
+
+
+    private fun getNotes() {
+        Log.d("wojtas", "newSearch")
+        // New search. Reset the state
+        //resetSearchState()
+
+        noteUseCases.getNotesUseCase.getNotes(
+            "Token 9c8b06d329136da358c2d00e76946b0111ce2c48",
+            1,
+            "chicken"
+        ).onEach { dataState ->
+            _shouldDisplayProgressBar.value = dataState.loading
+
+            dataState.data?.let { list ->
+                _viewState.value = NotesViewState(listOfNotes = list)
+            }
+
+            dataState.error?.let { error ->
+                Log.e("wojtas", "newSearch: ${error}")
+               // dialogQueue.appendErrorMessage("An Error Occurred", error)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
