@@ -1,5 +1,7 @@
 package com.example.userwithhilt_retrofit.data.repository
 
+import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDao
+import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import com.example.userwithhilt_retrofit.data.datasource.network.UserApiService
 import com.example.userwithhilt_retrofit.data.datasource.network.mappers.NetworkMapper
 import com.example.userwithhilt_retrofit.domain.model.Note
@@ -11,8 +13,9 @@ import kotlinx.coroutines.flow.flow
 
 class NoteNetworkRepositoryImpl(
     private val service: UserApiService,
-    private val token: String,
-    private val networkMapper: NetworkMapper
+    private val dao: NoteDao,
+    private val networkMapper: NetworkMapper,
+    private val cacheMapper: CacheMapper
 ) : NoteNetworkRepository {
     override fun getNotes(
         token: String,
@@ -20,37 +23,84 @@ class NoteNetworkRepositoryImpl(
         query: String,
     ): Flow<DataState<NotesViewState>> = flow {
 
-        try {
-            emit(DataState.loading())
-        } catch (e: Exception) {
-            emit(DataState.error(e.message ?: "Unknown Error"))
-        }
+//        try {
+//            emit(DataState.loading())
+//        } catch (e: Exception) {
+//            emit(DataState.error(e.message ?: "Unknown Error"))
+//        }
+//
+//        try {
+//            // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
+//            val recipes = getRecipesFromNetwork(
+//                token = token,
+//                page = page,
+//                query = query,
+//            )
+//
+//            emit(
+//                DataState.success(
+//                    NotesViewState(
+//                        listOfNotes = recipes
+//                    )
+//                )
+//            )
+//
+//            // insert into cache
+//            //   recipeDao.insertRecipes(entityMapper.toEntityList(recipes))
+//        } catch (e: Exception) {
+//            // There was a network issue
+//            e.printStackTrace()
+//        }
+
+
+//        emit(
+//            DataState.success(
+//                NotesViewState(
+//                    listOfNotes = recipes
+//                )
+//            )
+//        )
+
 
         try {
-            // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
-            val recipes = getRecipesFromNetwork(
-                token = token,
-                page = page,
-                query = query,
-            )
+            emit(DataState.loading())
+
+            try {
+                // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
+                val recipes = getRecipesFromNetwork(
+                    token = token,
+                    page = page,
+                    query = query,
+                )
+
+                // insert into cache
+                dao.insertNotes(cacheMapper.noteListToEntityList(recipes))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            // query the cache
+            val cacheResult = dao.getNotes()
+
+            // emit List<Recipe> from cache
+            val list = cacheMapper.entityListToNoteList(cacheResult)
 
             emit(
                 DataState.success(
                     NotesViewState(
-                        listOfNotes = recipes
+                        listOfNotes = list,
+                        message = "SUCCESS"
                     )
                 )
             )
-
-            // insert into cache
-            //   recipeDao.insertRecipes(entityMapper.toEntityList(recipes))
         } catch (e: Exception) {
-            // There was a network issue
-            e.printStackTrace()
+            emit(
+                DataState.error(
+                    message = "ERROR"
+                )
+            )
         }
-
     }
-
 
     // WARNING: This will throw exception if there is no network connection
     private suspend fun getRecipesFromNetwork(
@@ -58,7 +108,7 @@ class NoteNetworkRepositoryImpl(
         page: Int,
         query: String
     ): List<Note> {
-        return NetworkMapper().entityListToNoteList(
+        return networkMapper.entityListToNoteList(
             service.search(
                 token = token,
                 page = page,

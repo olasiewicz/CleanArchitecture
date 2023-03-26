@@ -41,6 +41,22 @@ constructor(
         )
     }
 
+    fun entityListToNoteList(entities: List<NoteCacheEntity>): List<Note>{
+        val list: ArrayList<Note> = ArrayList()
+        for(entity in entities){
+            list.add(mapFromEntity(entity))
+        }
+        return list
+    }
+
+    fun noteListToEntityList(notes: List<Note>): List<NoteCacheEntity>{
+        val entities: ArrayList<NoteCacheEntity> = ArrayList()
+        for(note in notes){
+            entities.add(mapToEntity(note))
+        }
+        return entities
+    }
+
     private fun convertIngredientListToString(ingredients: List<String>): String {
         val ingredientsString = StringBuilder()
         for(ingredient in ingredients){

@@ -1,5 +1,7 @@
 package com.example.userwithhilt_retrofit.di
 
+import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDao
+import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import com.example.userwithhilt_retrofit.data.datasource.network.UserApiService
 import com.example.userwithhilt_retrofit.data.datasource.network.mappers.NetworkMapper
 import com.example.userwithhilt_retrofit.data.repository.NoteNetworkRepositoryImpl
@@ -41,8 +43,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNoteNetworkRepository(service: UserApiService, token: String, networkMapper: NetworkMapper): NoteNetworkRepository {
-        return NoteNetworkRepositoryImpl(service, token, networkMapper)
+    fun provideNoteNetworkRepository(service: UserApiService, dao: NoteDao, networkMapper: NetworkMapper, cacheMapper: CacheMapper): NoteNetworkRepository {
+        return NoteNetworkRepositoryImpl(service, dao, networkMapper, cacheMapper)
     }
 
 }

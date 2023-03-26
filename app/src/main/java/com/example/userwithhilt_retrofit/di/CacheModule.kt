@@ -2,6 +2,7 @@ package com.example.userwithhilt_retrofit.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDao
 import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDatabase
 import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import dagger.Module
@@ -23,6 +24,12 @@ object CacheModule {
             NoteDatabase::class.java,
             NoteDatabase.DATABASE_NAME
         ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideNoteDao(db: NoteDatabase): NoteDao {
+        return db.noteDao
     }
 
     @Singleton
