@@ -1,13 +1,11 @@
-package com.example.userwithhilt_retrofit.ui.notes.noteList
+package com.example.userwithhilt_retrofit.ui.notes
 
 import android.util.Log
+import android.view.View
+import android.view.View.*
 import androidx.lifecycle.*
 import com.example.userwithhilt_retrofit.domain.model.Note
 import com.example.userwithhilt_retrofit.domain.use_case.NoteUseCases
-import com.example.userwithhilt_retrofit.domain.util.AbsentLiveData
-import com.example.userwithhilt_retrofit.domain.util.DataState
-import com.example.userwithhilt_retrofit.ui.notes.NotesStateEvent
-import com.example.userwithhilt_retrofit.ui.notes.NotesViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,6 +19,8 @@ class NotesListViewModel @Inject constructor(
 
     private val _stateEvent: MutableLiveData<NotesStateEvent> = MutableLiveData()
     private val _viewState: MutableLiveData<NotesViewState> = MutableLiveData()
+
+    val list: MutableLiveData<List<Note>> = MutableLiveData()
 
     val viewState: LiveData<NotesViewState>
         get() = _viewState
@@ -122,8 +122,8 @@ class NotesListViewModel @Inject constructor(
         ).onEach { dataState ->
             _shouldDisplayProgressBar.value = dataState.loading
 
-            dataState.data?.let { list ->
-                _viewState.value = NotesViewState(listOfNotes = list)
+            dataState.data?.let { viewState ->
+                _viewState.postValue(viewState)
             }
 
             dataState.error?.let { error ->

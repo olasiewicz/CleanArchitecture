@@ -5,6 +5,7 @@ import com.example.userwithhilt_retrofit.data.datasource.network.mappers.Network
 import com.example.userwithhilt_retrofit.domain.model.Note
 import com.example.userwithhilt_retrofit.domain.repository.NoteNetworkRepository
 import com.example.userwithhilt_retrofit.domain.util.DataState
+import com.example.userwithhilt_retrofit.ui.notes.NotesViewState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -17,7 +18,7 @@ class NoteNetworkRepositoryImpl(
         token: String,
         page: Int,
         query: String,
-    ): Flow<DataState<List<Note>>> = flow {
+    ): Flow<DataState<NotesViewState>> = flow {
 
         try {
             emit(DataState.loading())
@@ -33,17 +34,22 @@ class NoteNetworkRepositoryImpl(
                 query = query,
             )
 
-            emit(DataState.success(recipes))
+            emit(
+                DataState.success(
+                    NotesViewState(
+                        listOfNotes = recipes
+                    )
+                )
+            )
 
             // insert into cache
-         //   recipeDao.insertRecipes(entityMapper.toEntityList(recipes))
+            //   recipeDao.insertRecipes(entityMapper.toEntityList(recipes))
         } catch (e: Exception) {
             // There was a network issue
             e.printStackTrace()
         }
 
     }
-
 
 
     // WARNING: This will throw exception if there is no network connection
@@ -63,11 +69,6 @@ class NoteNetworkRepositoryImpl(
     }
 
 
-
-
-
-
-
     override suspend fun getNoteById(id: Int): Note? {
         TODO("Not yet implemented")
     }
@@ -79,11 +80,6 @@ class NoteNetworkRepositoryImpl(
     override suspend fun deleteNote(note: Note) {
         TODO("Not yet implemented")
     }
-
-
-
-
-
 
 
 }
