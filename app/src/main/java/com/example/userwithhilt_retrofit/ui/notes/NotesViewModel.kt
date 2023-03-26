@@ -1,9 +1,10 @@
 package com.example.userwithhilt_retrofit.ui.notes
 
 import android.util.Log
-import android.view.View
-import android.view.View.*
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.userwithhilt_retrofit.domain.model.Note
 import com.example.userwithhilt_retrofit.domain.use_case.NoteUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,7 @@ class NotesListViewModel @Inject constructor(
         get() = _shouldDisplayProgressBar
 
     init {
-       // handleStateEvent(NotesStateEvent.GetNotesEvent)
+        // handleStateEvent(NotesStateEvent.GetNotesEvent)
     }
 
 
@@ -74,40 +75,28 @@ class NotesListViewModel @Inject constructor(
 //    }
 
 
-
-
-
-
-
-
-
-
-
-    fun onTriggerEvent(event: NotesStateEvent){
+    fun onTriggerEvent(event: NotesStateEvent) {
         viewModelScope.launch {
             try {
-                when(event){
+                when (event) {
                     is NotesStateEvent.GetNotesEvent -> {
                         getNotes()
                     }
                     is NotesStateEvent.GetDetailsEvent -> {
-                        //nextPage()
+                        // navigateToDetailsFragment(event.note)
                     }
                     is NotesStateEvent.None -> {
-                      //  restoreState()
+                        //  restoreState()
                     }
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.e("wojtas", "launchJob: Exception: ${e}, ${e.cause}")
                 e.printStackTrace()
-            }
-            finally {
+            } finally {
                 Log.d("wojtas", "launchJob: finally called.")
             }
         }
     }
-
-
 
 
     private fun getNotes() {
@@ -123,24 +112,21 @@ class NotesListViewModel @Inject constructor(
             _shouldDisplayProgressBar.value = dataState.loading
 
             dataState.data?.let { viewState ->
-                _viewState.postValue(viewState)
+                _viewState.value = viewState
             }
 
             dataState.error?.let { error ->
                 Log.e("wojtas", "newSearch: ${error}")
-               // dialogQueue.appendErrorMessage("An Error Occurred", error)
+                // dialogQueue.appendErrorMessage("An Error Occurred", error)
             }
         }.launchIn(viewModelScope)
     }
 
-
-
-
-
-
-
-
-
+    fun setNote(note: Note) {
+        _viewState.value = NotesViewState(
+            note = note
+        )
+    }
 
 
 }

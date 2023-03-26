@@ -12,18 +12,18 @@ import com.example.userwithhilt_retrofit.domain.model.Note
 import com.example.userwithhilt_retrofit.ui.notes.noteList.NotesListAdapter.CustomViewHolder
 
 class NotesListAdapter(
-    private val requestManager: RequestManager
+    private val requestManager: RequestManager,
+    private val clickListener:(Note)->Unit
 ) : ListAdapter<Note, CustomViewHolder>(NoteItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): CustomViewHolder {
         val binding =
             UserListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CustomViewHolder(binding, requestManager)
-
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.bindTo(getItem(position))
+        holder.bindTo(getItem(position), clickListener)
     }
 
     class CustomViewHolder(
@@ -31,14 +31,19 @@ class NotesListAdapter(
         val requestManager: RequestManager
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bindTo(note: Note) {
+        fun bindTo(note: Note, clickListener: (Note) -> Unit) {
             binding.apply {
                 requestManager
                     .load(note.featuredImage)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(recipeImage)
+                recipeTitle.text = note.title
+                recipePublisher.text = note.publisher
                 //setVariable(model, note)
                // binding.executePendingBindings()
+                root.setOnClickListener {
+                    clickListener(note)
+                }
             }
         }
     }
