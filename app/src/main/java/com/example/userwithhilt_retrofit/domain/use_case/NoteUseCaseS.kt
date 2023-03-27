@@ -5,6 +5,7 @@ import javax.inject.Inject
 data class NoteUseCases
 @Inject constructor(
     val getNotesUseCase: GetNotesUseCase,
+    val getNoteDetailsUseCase: GetNoteDetailsUseCase
 //    val deleteNote: DeleteNote,
 //    val addNote: AddNote,
 //    val getNote: GetNote

@@ -6,18 +6,16 @@ import com.example.userwithhilt_retrofit.ui.notes.NotesViewState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetNotesUseCase
+class GetNoteDetailsUseCase
 @Inject constructor(
     private val repository: NoteRepository
 ) {
 
-    fun getNotes(
+    fun getNoteDetails(
         token: String,
-        page: Int,
-        query: String,
-        //noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)
+        noteId: Int
     ): Flow<DataState<NotesViewState>> {
-        return repository.getNotes(token, page, query)
+        return repository.getNoteDetails(token= token, noteId =  noteId)
 
 
 //            .map { notes ->

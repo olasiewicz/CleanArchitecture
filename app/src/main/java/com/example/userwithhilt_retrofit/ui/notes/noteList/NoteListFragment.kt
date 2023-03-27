@@ -12,10 +12,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.example.userwithhilt_retrofit.R
+import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import com.example.userwithhilt_retrofit.databinding.FragmentNoteListBinding
 import com.example.userwithhilt_retrofit.domain.model.Note
 import com.example.userwithhilt_retrofit.ui.UIController
-import com.example.userwithhilt_retrofit.ui.notes.NotesListViewModel
+import com.example.userwithhilt_retrofit.ui.notes.NotesViewModel
 import com.example.userwithhilt_retrofit.ui.notes.NotesStateEvent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,13 +26,17 @@ class NoteListFragment : Fragment() {
 
     @Inject
     lateinit var requestManager: RequestManager
+
+    @Inject
+    lateinit var cacheMapper: CacheMapper
+
     lateinit var recyclerAdapter: NotesListAdapter
     lateinit var uiController: UIController
 
     private var _binding: FragmentNoteListBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NotesListViewModel by viewModels()
+    private val viewModel: NotesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +64,7 @@ class NoteListFragment : Fragment() {
             // removeItemDecoration(topSpacingDecorator) // does nothing if not applied already
             // addItemDecoration(topSpacingDecorator)
 
-            recyclerAdapter = NotesListAdapter(requestManager, ::listItemClicked)
+            recyclerAdapter = NotesListAdapter(requestManager, cacheMapper, ::listItemClicked)
 //            addOnScrollListener(object: RecyclerView.OnScrollListener(){
 //
 //                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -80,12 +85,11 @@ class NoteListFragment : Fragment() {
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
 
             state.listOfNotes?.let { notesList ->
-                print("Wojtas $state")
                 recyclerAdapter.submitList(notesList)
             }
 
-            state.note?.let {
-                print("Wojtas $state")
+            state.note?.let { note ->
+                navigateToDetailsFragment(note)
             }
         }
         viewModel.shouldDisplayProgressBar.observe(viewLifecycleOwner) {
@@ -97,13 +101,14 @@ class NoteListFragment : Fragment() {
         uiController.displayProgressBar(isDisplayed)
     }
 
-    private fun listItemClicked(note: Note){
-        navigateToDetailsFragment(note)
+    private fun listItemClicked(note: Note) {
+        viewModel.onTriggerEvent(NotesStateEvent.GetDetailsEvent(note))
+
 
     }
 
-        private fun navigateToDetailsFragment(note: Note) {
-            val bundle = bundleOf("note" to note)
+    private fun navigateToDetailsFragment(note: Note) {
+        val bundle = bundleOf("note" to note)
         findNavController().navigate(
             R.id.action_noteListFragment_to_noteDetailsFragment,
             bundle

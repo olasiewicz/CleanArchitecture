@@ -6,7 +6,7 @@
 
         <variable
             name="notesViewModel"
-            type="com.example.userwithhilt_retrofit.ui.notes.NotesListViewModel" />
+            type="com.example.userwithhilt_retrofit.ui.notes.NotesViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

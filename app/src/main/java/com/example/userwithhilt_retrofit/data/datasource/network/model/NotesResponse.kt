@@ -9,4 +9,7 @@ data class NotesResponse(
 
     @SerializedName("results")
     var recipes: List<NoteNetworkEntity>,
+
+    @SerializedName("publisher")
+    var notePublisher: NoteNetworkEntity
 )

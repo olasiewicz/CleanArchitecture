@@ -3,11 +3,9 @@ package com.example.userwithhilt_retrofit.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.example.userwithhilt_retrofit.R
 import com.example.userwithhilt_retrofit.databinding.ActivityMainBinding
-import com.example.userwithhilt_retrofit.ui.notes.NotesListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

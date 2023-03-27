@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import com.example.userwithhilt_retrofit.databinding.UserListItemBinding
 import com.example.userwithhilt_retrofit.domain.model.Note
 import com.example.userwithhilt_retrofit.ui.notes.noteList.NotesListAdapter.CustomViewHolder
 
 class NotesListAdapter(
     private val requestManager: RequestManager,
+    private val cacheMapper: CacheMapper,
     private val clickListener:(Note)->Unit
 ) : ListAdapter<Note, CustomViewHolder>(NoteItemDiffCallback()) {
 
@@ -23,7 +25,7 @@ class NotesListAdapter(
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        holder.bindTo(getItem(position), clickListener)
+        holder.bindTo(getItem(position), cacheMapper, clickListener)
     }
 
     class CustomViewHolder(
@@ -31,14 +33,15 @@ class NotesListAdapter(
         val requestManager: RequestManager
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bindTo(note: Note, clickListener: (Note) -> Unit) {
+        fun bindTo(note: Note, cacheMapper: CacheMapper, clickListener: (Note) -> Unit) {
             binding.apply {
                 requestManager
                     .load(note.featuredImage)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(recipeImage)
                 recipeTitle.text = note.title
-                recipePublisher.text = note.publisher
+                recipePublisher.text = cacheMapper.convertIngredientListToString(note.ingredients)
+
                 //setVariable(model, note)
                // binding.executePendingBindings()
                 root.setOnClickListener {

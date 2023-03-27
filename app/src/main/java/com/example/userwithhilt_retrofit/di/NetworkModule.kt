@@ -4,8 +4,8 @@ import com.example.userwithhilt_retrofit.data.datasource.cache.NoteDao
 import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMapper
 import com.example.userwithhilt_retrofit.data.datasource.network.UserApiService
 import com.example.userwithhilt_retrofit.data.datasource.network.mappers.NetworkMapper
-import com.example.userwithhilt_retrofit.data.repository.NoteNetworkRepositoryImpl
-import com.example.userwithhilt_retrofit.domain.repository.NoteNetworkRepository
+import com.example.userwithhilt_retrofit.data.repository.NoteRepositoryImpl
+import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -39,12 +39,6 @@ class NetworkModule {
     @Provides
     fun provideNoteNetworkMapper(): NetworkMapper {
         return NetworkMapper()
-    }
-
-    @Provides
-    @Singleton
-    fun provideNoteNetworkRepository(service: UserApiService, dao: NoteDao, networkMapper: NetworkMapper, cacheMapper: CacheMapper): NoteNetworkRepository {
-        return NoteNetworkRepositoryImpl(service, dao, networkMapper, cacheMapper)
     }
 
 }

@@ -21,4 +21,7 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteNote(note: NoteCacheEntity)
+
+    @Query("UPDATE notes SET publisher = :publisher WHERE id = :id")
+    suspend fun updateNote(id: Int, publisher: String)
 }

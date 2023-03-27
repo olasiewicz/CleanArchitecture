@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NotesListViewModel @Inject constructor(
+class NotesViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases
 ) : ViewModel() {
 
@@ -83,10 +83,10 @@ class NotesListViewModel @Inject constructor(
                         getNotes()
                     }
                     is NotesStateEvent.GetDetailsEvent -> {
-                        // navigateToDetailsFragment(event.note)
+                        getNoteDetails(event.note)
                     }
                     is NotesStateEvent.None -> {
-                        //  restoreState()
+
                     }
                 }
             } catch (e: Exception) {
@@ -98,16 +98,30 @@ class NotesListViewModel @Inject constructor(
         }
     }
 
-
     private fun getNotes() {
-        Log.d("wojtas", "newSearch")
-        // New search. Reset the state
-        //resetSearchState()
 
         noteUseCases.getNotesUseCase.getNotes(
             "Token 9c8b06d329136da358c2d00e76946b0111ce2c48",
             1,
             "chicken"
+        ).onEach { dataState ->
+            _shouldDisplayProgressBar.value = dataState.loading
+
+            dataState.data?.let { viewState ->
+                _viewState.value = viewState
+            }
+
+            dataState.error?.let { error ->
+                Log.e("wojtas", "newSearch: ${error}")
+                // dialogQueue.appendErrorMessage("An Error Occurred", error)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getNoteDetails(note: Note) {
+        noteUseCases.getNoteDetailsUseCase.getNoteDetails(
+            "Token 9c8b06d329136da358c2d00e76946b0111ce2c48",
+            noteId = note.id
         ).onEach { dataState ->
             _shouldDisplayProgressBar.value = dataState.loading
 
@@ -176,23 +190,8 @@ class NotesListViewModel @Inject constructor(
 //                }.launchIn(viewModelScope)
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+
 //
 //            is NotesStateEvent.GetDetailsEvent -> {
 //                return AbsentLiveData.create()

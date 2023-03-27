@@ -57,7 +57,7 @@ constructor(
         return entities
     }
 
-    private fun convertIngredientListToString(ingredients: List<String>): String {
+    fun convertIngredientListToString(ingredients: List<String>): String {
         val ingredientsString = StringBuilder()
         for(ingredient in ingredients){
             ingredientsString.append("$ingredient,")
@@ -65,7 +65,7 @@ constructor(
         return ingredientsString.toString()
     }
 
-    private fun convertIngredientsToList(ingredientsString: String?): List<String>{
+    fun convertIngredientsToList(ingredientsString: String?): List<String>{
         val list: ArrayList<String> = ArrayList()
         ingredientsString?.let {
             for(ingredient in it.split(",")){

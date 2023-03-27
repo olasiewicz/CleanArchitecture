@@ -5,62 +5,23 @@ import com.example.userwithhilt_retrofit.data.datasource.cache.mapers.CacheMappe
 import com.example.userwithhilt_retrofit.data.datasource.network.UserApiService
 import com.example.userwithhilt_retrofit.data.datasource.network.mappers.NetworkMapper
 import com.example.userwithhilt_retrofit.domain.model.Note
-import com.example.userwithhilt_retrofit.domain.repository.NoteNetworkRepository
+import com.example.userwithhilt_retrofit.domain.repository.NoteRepository
 import com.example.userwithhilt_retrofit.domain.util.DataState
 import com.example.userwithhilt_retrofit.ui.notes.NotesViewState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class NoteNetworkRepositoryImpl(
+class NoteRepositoryImpl(
     private val service: UserApiService,
     private val dao: NoteDao,
     private val networkMapper: NetworkMapper,
     private val cacheMapper: CacheMapper
-) : NoteNetworkRepository {
+) : NoteRepository {
     override fun getNotes(
         token: String,
         page: Int,
         query: String,
     ): Flow<DataState<NotesViewState>> = flow {
-
-//        try {
-//            emit(DataState.loading())
-//        } catch (e: Exception) {
-//            emit(DataState.error(e.message ?: "Unknown Error"))
-//        }
-//
-//        try {
-//            // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
-//            val recipes = getRecipesFromNetwork(
-//                token = token,
-//                page = page,
-//                query = query,
-//            )
-//
-//            emit(
-//                DataState.success(
-//                    NotesViewState(
-//                        listOfNotes = recipes
-//                    )
-//                )
-//            )
-//
-//            // insert into cache
-//            //   recipeDao.insertRecipes(entityMapper.toEntityList(recipes))
-//        } catch (e: Exception) {
-//            // There was a network issue
-//            e.printStackTrace()
-//        }
-
-
-//        emit(
-//            DataState.success(
-//                NotesViewState(
-//                    listOfNotes = recipes
-//                )
-//            )
-//        )
-
 
         try {
             emit(DataState.loading())
@@ -102,6 +63,53 @@ class NoteNetworkRepositoryImpl(
         }
     }
 
+    override fun getNoteDetails(
+        token: String,
+        noteId: Int
+    ): Flow<DataState<NotesViewState>> = flow {
+        try {
+            emit(DataState.loading())
+
+            try {
+                // Convert: NetworkRecipeEntity -> Recipe -> RecipeCacheEntity
+                val noteDetails = getNoteDetailsFromNetwork(
+                    token = token,
+                    noteID = noteId
+                )
+
+                val changed = cacheMapper.mapToEntity(noteDetails).publisher + "Wojtas"
+
+                // update cache note
+                dao.updateNote(noteId, changed)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            // query the cache
+            val cacheResult = dao.getNoteById(noteId)
+
+            // emit List<Recipe> from cache
+            val note = cacheResult?.let { cacheMapper.mapFromEntity(it) }
+
+            emit(
+                DataState.success(
+                    NotesViewState(
+                        note = note,
+                        message = "SUCCESS"
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            emit(
+                DataState.error(
+                    message = "ERROR"
+                )
+            )
+        }
+
+    }
+
+
     // WARNING: This will throw exception if there is no network connection
     private suspend fun getRecipesFromNetwork(
         token: String,
@@ -116,6 +124,19 @@ class NoteNetworkRepositoryImpl(
             ).recipes
         )
 
+    }
+
+    // WARNING: This will throw exception if there is no network connection
+    private suspend fun getNoteDetailsFromNetwork(
+        token: String,
+        noteID: Int
+    ): Note {
+        return networkMapper.mapFromEntity(
+            service.get(
+                token = token,
+                id = noteID
+            )
+        )
     }
 
 
